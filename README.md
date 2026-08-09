@@ -16,7 +16,7 @@
 
 <br><br>
 
-**[🌐 Experience Live Public Web App](https://potluriprashanth33.github.io/document-query-assistant/)**
+**[🌐 Experience Live Public Web App]([https://potluriprashanth33.github.io/document-query-assistant/](https://potluriprashanth33.github.io/document-query-assistant/))**
 
 </div>
 
@@ -140,7 +140,7 @@ Open **`http://localhost:8080`** in your browser.
 
 This project is configured for deployment on **GitHub Pages**:
 
-- **Live URL**: [https://potluriprashanth33.github.io/document-query-assistant/](https://potluriprashanth33.github.io/document-query-assistant/)
+- **Live URL**: [https://potluriprashanth33.github.io/document-query-assistant/]([https://potluriprashanth33.github.io/document-query-assistant/](https://potluriprashanth33.github.io/document-query-assistant/))
 - **Repository**: [github.com/potluriprashanth33/document-query-assistant](https://github.com/potluriprashanth33/document-query-assistant)
 - **Deployment Branch**: `main` (`/` root folder)
 
