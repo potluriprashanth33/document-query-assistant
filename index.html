@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corpus Query Assistant | Swecha AI Stack</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-logo">⚡</div>
+        <div>
+          <h1 class="brand-title">Swecha Corpus Query Assistant</h1>
+          <p class="brand-subtitle">Powered by corpus-client & Local RAG Vector Engine</p>
+        </div>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span id="system-status-text">swecha-cli connected</span>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-query')">
+        <span>🔍</span> Query Console & Pipeline
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-api')">
+        <span>🔌</span> API & MCP Inspector
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-theory')">
+        <span>📖</span> Step-by-Step Architecture Guide
+      </button>
+    </nav>
+
+    <!-- TAB 1: Query Console -->
+    <div id="tab-query" class="tab-content active">
+      <div class="grid-2col">
+        
+        <!-- Left Side: Control Panel & Inputs -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+          <div class="glass-card">
+            <div class="card-title">
+              <span>Select Corpus Dataset</span>
+              <span class="badge badge-purple">Dataset API</span>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="dataset-select">Active Knowledge Corpus</label>
+              <select id="dataset-select" class="select-input" onchange="onDatasetChange()">
+                <option value="swecha-open-docs">Swecha Open Source Knowledge Base (v1.2)</option>
+                <option value="telugu-nlp">Telugu NLP Corpus & Literature (v0.8)</option>
+                <option value="python-ml">Python & Machine Learning Documentation (v2.0)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="query-input">Enter Prompt / Question</label>
+              <input type="text" id="query-input" class="text-input" placeholder="e.g. How does OpenCode connect to local Ollama models?" value="How does OpenCode connect to local Ollama models?">
+              
+              <div class="sample-chips">
+                <span class="chip" onclick="setQuery('How does OpenCode connect to local Ollama models?')">Ollama Integration</span>
+                <span class="chip" onclick="setQuery('What are the default security permissions for Swecha auth?')">Auth Permissions</span>
+                <span class="chip" onclick="setQuery('Explain vector embedding chunking in corpus-client')">Vector Chunking</span>
+              </div>
+            </div>
+
+            <button class="btn-primary" onclick="runDocumentQuery()">
+              <span>🚀</span> Execute Corpus Pipeline
+            </button>
+          </div>
+
+          <!-- Pipeline Stage Tracker -->
+          <div class="glass-card">
+            <div class="card-title">
+              <span>RAG Pipeline Execution Stages</span>
+              <span class="badge badge-cyan">Sequential Flow</span>
+            </div>
+            
+            <div class="pipeline-container">
+              <div id="stage-1" class="pipeline-step">
+                <div class="step-number">1</div>
+                <div class="step-info">
+                  <div class="step-title">1. Prompt Tokenization & Embedding</div>
+                  <div class="step-desc">Convert search prompt to dense vector embedding.</div>
+                  <div id="stage-1-out" class="step-output">Ready</div>
+                </div>
+              </div>
+
+              <div id="stage-2" class="pipeline-step">
+                <div class="step-number">2</div>
+                <div class="step-info">
+                  <div class="step-title">2. Corpus Similarity Matching (KNN)</div>
+                  <div class="step-desc">Query index for top-k matching text chunks.</div>
+                  <div id="stage-2-out" class="step-output">Ready</div>
+                </div>
+              </div>
+
+              <div id="stage-3" class="pipeline-step">
+                <div class="step-number">3</div>
+                <div class="step-info">
+                  <div class="step-title">3. Context Construction</div>
+                  <div class="step-desc">Format retrieved documents into augmented LLM prompt.</div>
+                  <div id="stage-3-out" class="step-output">Ready</div>
+                </div>
+              </div>
+
+              <div id="stage-4" class="pipeline-step">
+                <div class="step-number">4</div>
+                <div class="step-info">
+                  <div class="step-title">4. Local LLM Synthesis</div>
+                  <div class="step-desc">Generate final answer via local model server.</div>
+                  <div id="stage-4-out" class="step-output">Ready</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Outputs & Retrieved Chunks -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+          <!-- Retrieved Context Chunks -->
+          <div class="glass-card">
+            <div class="card-title">
+              <span>Retrieved Corpus Chunks (Ranked)</span>
+              <span class="badge badge-amber">Vector Store</span>
+            </div>
+            <div id="chunks-container" class="results-box">
+              <p style="color: var(--text-muted); text-align: center; padding-top: 60px;">
+                Click <strong>Execute Corpus Pipeline</strong> to retrieve matched dataset chunks.
+              </p>
+            </div>
+          </div>
+
+          <!-- Final Answer Synthesis -->
+          <div class="glass-card">
+            <div class="card-title">
+              <span>Synthesized Response</span>
+              <span class="badge badge-purple">LLM Response</span>
+            </div>
+            <div id="response-box" class="results-box" style="font-family: var(--font-sans); line-height: 1.7;">
+              <p style="color: var(--text-muted); text-align: center; padding-top: 40px;">
+                Awaiting query execution...
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: API & MCP Inspector -->
+    <div id="tab-api" class="tab-content">
+      <div class="grid-2col">
+        <div class="glass-card">
+          <div class="card-title">
+            <span>corpus-client CLI Commands</span>
+            <span class="badge badge-cyan">Terminal Commands</span>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">
+            The `corpus-client` tool provides direct subcommands to inspect, download, and index corpora:
+          </p>
+          <div class="code-block">
+            <span class="code-comment"># 1. Check client version & status</span><br>
+            <span class="code-func">corpus-client</span> --version<br><br>
+            <span class="code-comment"># 2. Search available Swecha datasets</span><br>
+            <span class="code-func">corpus-client</span> search --query <span class="code-string">"swecha-open-docs"</span><br><br>
+            <span class="code-comment"># 3. Pull corpus data to local cache</span><br>
+            <span class="code-func">corpus-client</span> fetch --id swecha-open-docs --out ~/.cache/swecha/<br><br>
+            <span class="code-comment"># 4. Start local MCP vector server</span><br>
+            <span class="code-func">corpus-client</span> serve --port 8080
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-title">
+            <span>OpenCode MCP Integration Config</span>
+            <span class="badge badge-purple">~/.config/opencode/opencode.json</span>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">
+            How `opencode` connects to `corpus-client` via Model Context Protocol (MCP):
+          </p>
+          <div class="code-block">
+{
+  <span class="code-keyword">"mcp"</span>: {
+    <span class="code-keyword">"corpus-client"</span>: {
+      <span class="code-keyword">"type"</span>: <span class="code-string">"local"</span>,
+      <span class="code-keyword">"command"</span>: [<span class="code-string">"corpus-client"</span>, <span class="code-string">"serve"</span>],
+      <span class="code-keyword">"enabled"</span>: <span class="code-keyword">true</span>
+    }
+  }
+}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Theoretical Guide -->
+    <div id="tab-theory" class="tab-content">
+      <div class="glass-card theory-section">
+        <h2 style="font-size: 1.3rem; margin-bottom: 12px;">📖 Theoretical Architecture & Principles</h2>
+        
+        <div class="concept-box">
+          <div class="concept-title">1. What is the core principle of corpus-client?</div>
+          <p style="font-size: 0.9rem; color: var(--text-main);">
+            `corpus-client` decouples large knowledge bases from LLM weights. Instead of fine-tuning or re-training a neural network every time documents update, `corpus-client` stores documents as searchable vector chunks. When a user asks a question, it retrieves only the relevant paragraphs and feeds them into the local model's prompt.
+          </p>
+        </div>
+
+        <div class="concept-box" style="border-left-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.05);">
+          <div class="concept-title" style="color: var(--accent-cyan);">2. How does corpus-client connect to models & servers?</div>
+          <p style="font-size: 0.9rem; color: var(--text-main);">
+            It connects via two primary paths:
+            <br>• <strong>Local Vector IPC / MCP Protocol</strong>: Serves local JSON-RPC endpoints to AI coding agents like <code>opencode</code>.
+            <br>• <strong>REST API Gateway</strong>: Communicates with Swecha's central forge (<code>code.swecha.org</code>) to synchronize licensed datasets.
+          </p>
+        </div>
+
+        <div class="concept-box" style="border-left-color: var(--accent-success); background: rgba(16, 185, 129, 0.05);">
+          <div class="concept-title" style="color: var(--accent-success);">3. What sequential outputs are generated?</div>
+          <p style="font-size: 0.9rem; color: var(--text-main);">
+            <strong>Sequence Order:</strong>
+            <br>1. <code>raw_documents.json</code> — Initial raw text files pulled from repository.
+            <br>2. <code>token_chunks.json</code> — Text split into 512-character blocks with 50-character overlap.
+            <br>3. <code>embeddings.bin</code> — Floating point matrix representations of document chunks.
+            <br>4. <code>augmented_prompt.txt</code> — Final combined query + context passed into local LLM runtime.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
